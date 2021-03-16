@@ -123,4 +123,4 @@ def icmp_ping(host, timeout=1):
         if roundTrip_cnt != 0:
             print ('round-trip min/avg/max {:.3f}/{:.3f}/{:.3f} ms'.format(roundTrip_min, roundTrip_sum / roundTrip_cnt, roundTrip_max))
 
-icmp_ping(args["destination"])         # Calls ping routine with destination google
+icmp_ping(args["destination"])         # Calls ping routine with destination
