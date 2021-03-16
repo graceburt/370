@@ -108,11 +108,11 @@ def icmp_ping(host, timeout=1):
             time.sleep(1)                           # Wait one second
     except KeyboardInterrupt:       # Stops when the user hits the interrupt key
         if count != 0:
-            print '--- {} ping statistics ---'.format(host)     # Print and format statistics
-            print '{} packets transmitted, {} packets received, {:.1f}% packet loss'.format(count, roundTrip_cnt,
-                                                                                            100.0 - roundTrip_cnt * 100.0 / count)
+            print('--- {} ping statistics ---'.format(host))   # Print and format statistics
+            print('{} packets transmitted, {} packets received, {:.1f}% packet loss'.format(count, roundTrip_cnt,
+                                                                                            100.0 - roundTrip_cnt * 100.0 / count))
             if roundTrip_cnt != 0:
-                print 'round-trip min/avg/max {:.3f}/{:.3f}/{:.3f} ms'.format(roundTrip_min, roundTrip_sum / roundTrip_cnt, roundTrip_max)
+                print('round-trip min/avg/max {:.3f}/{:.3f}/{:.3f} ms'.format(roundTrip_min, roundTrip_sum / roundTrip_cnt, roundTrip_max))
 
 
 icmp_ping("www.google.com")         # Calls ping routine with destination google
