@@ -104,7 +104,7 @@ def icmp_ping(host, timeout=1):
     try:
         while True:
             count += 1
-            print perform_one_ping(dest, timeout)   # calls function to send ping
+            print(perform_one_ping(dest, timeout))  # calls function to send ping
             time.sleep(1)                           # Wait one second
     except KeyboardInterrupt:       # Stops when the user hits the interrupt key
         if count != 0:
