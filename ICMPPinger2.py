@@ -115,4 +115,4 @@ def icmp_ping(host, timeout=1):
                 print('round-trip min/avg/max {:.3f}/{:.3f}/{:.3f} ms'.format(roundTrip_min, roundTrip_sum / roundTrip_cnt, roundTrip_max))
 
 
-icmp_ping("www.google.com")         # Calls ping routine with destination google
+icmp_ping("127.0.0.1")         # Calls ping routine with destination google
