@@ -4,9 +4,16 @@ import struct   # Needed to unpack the struct that is the receieved packet
 import time     # Needed for timing RTT
 import select   # Needed for monitoring sockets
 import socket   # Used for manipulating the socket
-
+import argparse #used for handling arguments
 ICMP_ECHO_REQUEST_RATE = 8      # Type must be set to 0
-
+ap = argparse.ArgumentParser()
+ap.add_argument("-d", "--destination",default="127.0.0.1"
+ ,required=False,
+	help="address that will be pinged")
+ap.add_argument("-n", "--number",default=256
+ ,required=False,
+	help="number of ICMP pings that will be sent")
+args = vars(ap.parse_args())
 # This function returns the time delay between sending and receiving a single ping.
 def perform_one_ping(destination_add, timeout):
     icmp_ping = socket.getprotobyname("icmp")                               # Translates protocol name into a constant to be passed as an (optional) argument to the socket function
@@ -115,4 +122,4 @@ def icmp_ping(host, timeout=1):
                 print('round-trip min/avg/max {:.3f}/{:.3f}/{:.3f} ms'.format(roundTrip_min, roundTrip_sum / roundTrip_cnt, roundTrip_max))
 
 
-icmp_ping("127.0.0.1")         # Calls ping routine with destination google
+icmp_ping(args["destination"])         # Calls ping routine with destination google
