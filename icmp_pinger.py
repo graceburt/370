@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Mar 11 17:09:06 2021
-
-@author: grace
-"""
-
 from socket import *
 import os
 import sys
@@ -16,48 +9,51 @@ ICMP_ECHO_REQUEST = 8
 
 def checksum(str_):
     # In this function we make the checksum of our packet 
-        #a digit representing the sum of the correct digits in a piece of stored or transmitted digital data, against which later comparisons can be made to detect errors in the data.
-    str_ = bytearray(str_)
+        #checksum is a digit representing the sum of the correct digits in a piece of stored or transmitted digital data, against which later comparisons can be made to detect errors in the data.
+    
+    str_ = bytearray(str_) #returns an array of bytes of the given size and initialization values 0 <= x < 256
+    
     csum = 0
-    countTo = (len(str_) // 2) * 2
+    countTo = (len(str_) // 2) * 2 
 
     for count in range(0, countTo, 2):
-        thisVal = str_[count+1] * 256 + str_[count]
-        csum = csum + thisVal
-        csum = csum & 0xffffffff
+        thisVal = str_[count+1] * 256 + str_[count] #thisVal covers (iteration list array of bytes + 1 * 256) + iteration of list of array of bytes
+        csum = csum + thisVal #creates csum using the iteration + current csum value (begins at 0)
+        csum = csum & 0xffffffff #checking for overflow & if positive using '0xffffffff'
 
-    if countTo < len(str_):
-        csum = csum + str_[-1]
-        csum = csum & 0xffffffff
+    if countTo < len(str_): #if length is less than length of array of bytes
+        csum = csum + str_[-1] #setting csum to csum + bytearray at position -1 - the last element in the list
+        csum = csum & 0xffffffff #checking for overflow & if positive using '0xffffffff'
 
-    csum = (csum >> 16) + (csum & 0xffff)
-    csum = csum + (csum >> 16)
-    answer = ~csum
-    answer = answer & 0xffff
-    answer = answer >> 8 | (answer << 8 & 0xff00)
+    csum = (csum >> 16) + (csum & 0xffff) #shifts csum over to the right by 16 places and checks for overflow & positivity
+    csum = csum + (csum >> 16) #adds csum from above to (csum from above shifted another 16 places)
+    answer = ~csum #inverts csum
+    answer = answer & 0xffff #checks for overflow & positivity
+    answer = answer >> 8 | (answer << 8 & 0xff00) #shifts over right 8 bits OR shifts left 8 places and checks for overflow
     return answer
 
 def receiveOnePing(mySocket, ID, timeout, destAddr):
-    timeLeft = timeout
-    while 1:
-        startedSelect = time.time()
-        whatReady = select.select([mySocket], [], [], timeLeft)
-        howLongInSelect = (time.time() - startedSelect)
-        if whatReady[0] == []: # Timeout
+    timeLeft = timeout #total time left before timeout
+    while 1: #while true
+        startedSelect = time.time() #marks start time, returns time in seconds (float)
+        whatReady = select.select([mySocket], [], [], timeLeft) #3 params are 'waitable objs' 
+        #.select() - rlist waits until ready for reading, wlist wait until ready for writing, xlist waits for 'exceptional condition', timeout is final param
+        howLongInSelect = (time.time() - startedSelect) #how long wait til select
+        if whatReady[0] == []: # Timeout 
             return "Request timed out."
 
-        timeReceived = time.time()
-        recPacket, addr = mySocket.recvfrom(1024)
+        timeReceived = time.time() #time ping is recieved
+        recPacket, addr = mySocket.recvfrom(1024) #recieves data from socket, return value is pair (bytes, address) where bytes represent datar recieved & add is add of socket sending data
 
-        icmpHeader = recPacket[20:28]
-        icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader)
+        icmpHeader = recPacket[20:28] #header is bytes recieved from socket from position 20 - 28
+        icmpType, code, mychecksum, packetID, sequence = struct.unpack("bbHHh", icmpHeader) #unpacks buffer (second param) according to str format (first param) returns tuple even if it contanis only 1 item - buffer's size in bytes must match the sze required by format
     
-        if type != 8 and packetID == ID:
-            bytesInDouble = struct.calcsize("d")
-            timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0]
-            return timeReceived - timeSent
+        if type != 8 and packetID == ID: #uses the function type() to return val of type obj & if packetId (returned id) is the same as the one we sent (ID)
+            bytesInDouble = struct.calcsize("d") #returns size of the struct corresponds to format string (listed in param)
+            timeSent = struct.unpack("d", recPacket[28:28 + bytesInDouble])[0] #unpacks buffer of recieved packet by format 'd', starts from position 28 on packet + size of struct ^^ @ list size 0
+            return timeReceived - timeSent #returns time that has passed from sending - recieving 
 
-        timeLeft = timeLeft - howLongInSelect
+        timeLeft = timeLeft - howLongInSelect #returns leftover time, if any
         
         if timeLeft <= 0:
             return "Request timed out."
@@ -99,7 +95,7 @@ def doOnePing(destAddr, timeout):
     return delay  
 
 def ping(host, timeout=1):
-    dest = gethostbyname(host)
+    dest = gethostbyname(host) #names host destination
     print ("Pinging " + dest + " using Python:")
     print ("")
     #Send ping requests to a server separated by approximately one second
