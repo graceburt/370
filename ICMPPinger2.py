@@ -59,12 +59,12 @@ def checksum(str):
     countTo = (len(str) / 2) * 2            # Get length in bits
     count = 0
     while count < countTo:      # While there are still bits to go through
-        thisVal = ord(str[count + 1]) * 256 + ord(str[count])           # Returns the current bit, Ord returns an integer that represents the unicode symbol
+        thisVal = str[count + 1] * 256 + str[count]          # Returns the current bit, Ord returns an integer that represents the unicode symbol
         count_sum = count_sum + thisVal                                 # Adds bit to the count sum
         count_sum = count_sum & 0xffffffff                              # Bitwise and operation to check for overflow
         count = count + 2                                               # Move to next bit
     if countTo < len(str):                                  # If more bits in the string
-        count_sum = count_sum + ord(str[len(str) - 1])      # Add the last bit
+        count_sum = count_sum + str[len(str) - 1]      # Add the last bit
         count_sum = count_sum & 0xffffffff                  # Bitwise and operation to check for overflow
     count_sum = (count_sum >> 16) + (count_sum & 0xffff)    # Shifts the bits right 16 places and check for overflow
     count_sum = count_sum + (count_sum >> 16)               # Add to count sum and count sum shifted 16 right
